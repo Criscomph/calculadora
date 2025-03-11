@@ -1,0 +1,65 @@
+<div class="calculator-container">
+  <h1>Calculadora de Empréstimos</h1>
+  
+  <div class="input-container">
+    <div class="input-field">
+      <label>Data Inicial</label>
+      <input type="date" [(ngModel)]="dataInicial" name="dataInicial">
+    </div>
+
+    <div class="input-field">
+      <label>Data Final</label>
+      <input type="date" [(ngModel)]="dataFinal" name="dataFinal">
+    </div>
+
+    <div class="input-field">
+      <label>Primeiro Pagamento</label>
+      <input type="date" [(ngModel)]="primeiroPagamento" name="primeiroPagamento">
+    </div>
+
+    <div class="input-field">
+      <label>Valor do Empréstimo</label>
+      <input type="number" [(ngModel)]="valorEmprestimo" name="valorEmprestimo" placeholder="0">
+    </div>
+
+    <div class="input-field">
+      <label>Taxa de Juros</label>
+      <input type="number" [(ngModel)]="taxaJuros" name="taxaJuros" placeholder="0">
+    </div>
+
+    <button class="calculate-btn">Calcular</button>
+  </div>
+
+  <div class="results-grid">
+    <table>
+      <thead>
+        <tr>
+          <th>Data Competência</th>
+          <th>Valor do Empréstimo</th>
+          <th>Saldo Devedor</th>
+          <th>Consolidada</th>
+          <th>Total</th>
+          <th>Amortização</th>
+          <th>Saldo</th>
+          <th>Provisão</th>
+          <th>Acumulado</th>
+          <th>Pago</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{dataInicial}}</td>
+          <td>{{valorEmprestimo}}</td>
+          <td>0.00</td>
+          <td>0.00</td>
+          <td>0.00</td>
+          <td>0.00</td>
+          <td>0.00</td>
+          <td>0.00</td>
+          <td>0.00</td>
+          <td>0.00</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div> 
