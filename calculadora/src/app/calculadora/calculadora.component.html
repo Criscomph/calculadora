@@ -4,35 +4,41 @@
   <div class="input-container">
     <div class="input-field">
       <label>Data Inicial</label>
-      <input type="date" [(ngModel)]="dataInicial" name="dataInicial">
+      <input type="date" [(ngModel)]="dataInicial" name="dataInicial" (ngModelChange)="onInputChange()" required>
     </div>
 
     <div class="input-field">
       <label>Data Final</label>
-      <input type="date" [(ngModel)]="dataFinal" name="dataFinal">
+      <input type="date" [(ngModel)]="dataFinal" name="dataFinal" (ngModelChange)="onInputChange()" required>
     </div>
 
     <div class="input-field">
       <label>Primeiro Pagamento</label>
-      <input type="date" [(ngModel)]="primeiroPagamento" name="primeiroPagamento">
+      <input type="date" [(ngModel)]="primeiroPagamento" name="primeiroPagamento" (ngModelChange)="onInputChange()" required>
     </div>
 
     <div class="input-field">
       <label>Valor do Empréstimo</label>
-      <input type="number" [(ngModel)]="valorEmprestimo" name="valorEmprestimo" placeholder="0">
+      <input type="number" [(ngModel)]="valorEmprestimo" name="valorEmprestimo" placeholder="0.00" min="0" step="0.01" (ngModelChange)="onInputChange()" required>
     </div>
 
     <div class="input-field">
       <label>Taxa de Juros</label>
-      <input type="number" [(ngModel)]="taxaJuros" name="taxaJuros" placeholder="0">
+      <input type="number" [(ngModel)]="taxaJuros" name="taxaJuros" placeholder="0.00" min="0" step="0.01" (ngModelChange)="onInputChange()" required>
     </div>
 
-    <button class="calculate-btn">Calcular</button>
+    <button class="calculate-btn" [disabled]="!formValido" (click)="calcular()">Calcular</button>
   </div>
 
   <div class="results-grid">
     <table>
       <thead>
+        <tr class="header-groups">
+          <th colspan="3">Empréstimo</th>
+          <th colspan="3">Parcela</th>
+          <th colspan="2">Principal</th>
+          <th colspan="3">Juros</th>
+        </tr>
         <tr>
           <th>Data Competência</th>
           <th>Valor do Empréstimo</th>
@@ -47,17 +53,17 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>{{dataInicial}}</td>
-          <td>{{valorEmprestimo}}</td>
-          <td>0.00</td>
-          <td>0.00</td>
-          <td>0.00</td>
-          <td>0.00</td>
-          <td>0.00</td>
-          <td>0.00</td>
-          <td>0.00</td>
-          <td>0.00</td>
+        <tr *ngFor="let resultado of resultados">
+          <td>{{resultado.dataCompetencia | date:'dd/MM/yyyy'}}</td>
+          <td>{{resultado.valorEmprestimo | number:'1.2-2'}}</td>
+          <td>{{resultado.saldoDevedor | number:'1.2-2'}}</td>
+          <td>{{resultado.consolidada | number:'1.2-2'}}</td>
+          <td>{{resultado.total | number:'1.2-2'}}</td>
+          <td>{{resultado.amortizacao | number:'1.2-2'}}</td>
+          <td>{{resultado.saldo | number:'1.2-2'}}</td>
+          <td>{{resultado.provisao | number:'1.2-2'}}</td>
+          <td>{{resultado.acumulado | number:'1.2-2'}}</td>
+          <td>{{resultado.pago}}</td>
         </tr>
       </tbody>
     </table>

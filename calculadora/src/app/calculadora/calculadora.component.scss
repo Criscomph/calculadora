@@ -53,6 +53,16 @@
     width: 100%;
     border-collapse: collapse;
     
+    .header-groups th {
+      background-color: #1e4e79;
+      color: white;
+      padding: 12px;
+      text-align: center;
+      font-weight: normal;
+      border: 1px solid #2a5d8c;
+      white-space: nowrap;
+    }
+
     th {
       background-color: #1e4e79;
       color: white;
@@ -70,32 +80,17 @@
       white-space: nowrap;
     }
 
-    // Grupos de colunas
-    th:nth-child(1), // Data Competência
-    th:nth-child(2), // Valor do Empréstimo
-    th:nth-child(3)  // Saldo Devedor
-    {
-      background-color: #1e4e79;
-    }
-
-    th:nth-child(4), // Consolidada
-    th:nth-child(5), // Total
-    th:nth-child(6), // Amortização
-    th:nth-child(7)  // Saldo
-    {
-      background-color: #1e4e79;
-    }
-
-    th:nth-child(8), // Provisão
-    th:nth-child(9), // Acumulado
-    th:nth-child(10) // Pago
-    {
-      background-color: #1e4e79;
-    }
-
-    // Alinhamento dos números à direita
     td:not(:first-child) {
       text-align: right;
     }
   }
+}
+
+.input-field input.ng-invalid.ng-touched {
+  border-color: #dc3545;
+}
+
+.calculate-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 } 
