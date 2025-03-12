@@ -18,7 +18,9 @@ export class CalculadoraComponent {
   dataFinal: string = '';
   primeiroPagamento: string = '';
   valorEmprestimo: number = 0;
+  valorEmprestimoFormatado: string = '';
   taxaJuros: number = 0;
+  taxaJurosFormatada: string = '';
   resultados: InstallmentDTO[] = [];
   formValido: boolean = false;
 
@@ -27,9 +29,48 @@ export class CalculadoraComponent {
     private cdr: ChangeDetectorRef
   ) {}
 
+  formatarValorEmprestimo(valor: string) {
+    // Remove todos os caracteres não numéricos exceto vírgula
+    let numero = valor.replace(/[^\d,]/g, '').replace(',', '.');
+    
+    // Converte para número
+    let valorNumerico = Number(numero);
+    
+    // Atualiza o valor numérico
+    this.valorEmprestimo = valorNumerico;
+    
+    // Formata o valor para exibição
+    this.valorEmprestimoFormatado = valorNumerico.toLocaleString('pt-BR', {
+      style: 'decimal',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    this.onInputChange();
+  }
+
+  formatarTaxaJuros(valor: string) {
+    // Remove o símbolo de % e outros caracteres não numéricos exceto vírgula
+    let numero = valor.replace(/[^\d,]/g, '').replace(',', '.');
+    
+    // Converte para número
+    this.taxaJuros = Number(numero);
+    
+    // Formata para exibição
+    this.taxaJurosFormatada = numero + '%';
+
+    this.onInputChange();
+  }
+
   validarFormulario(): boolean {
-    if (!this.dataInicial || !this.dataFinal || !this.primeiroPagamento || 
-        !this.valorEmprestimo || !this.taxaJuros) {
+    // Verifica se todos os campos estão preenchidos
+    if (!this.dataInicial || !this.dataFinal || !this.primeiroPagamento) {
+      return false;
+    }
+
+    // Verifica se os valores numéricos são válidos e maiores que zero
+    if (isNaN(this.valorEmprestimo) || this.valorEmprestimo <= 0 ||
+        isNaN(this.taxaJuros) || this.taxaJuros <= 0) {
       return false;
     }
 
@@ -37,15 +78,13 @@ export class CalculadoraComponent {
     const dFinal = new Date(this.dataFinal);
     const dPrimeiroPagamento = new Date(this.primeiroPagamento);
 
-    if (dFinal <= dInicial) {
+    // Verifica se as datas são válidas
+    if (isNaN(dInicial.getTime()) || isNaN(dFinal.getTime()) || isNaN(dPrimeiroPagamento.getTime())) {
       return false;
     }
 
-    if (dPrimeiroPagamento <= dInicial || dPrimeiroPagamento >= dFinal) {
-      return false;
-    }
-
-    if (this.valorEmprestimo <= 0 || this.taxaJuros <= 0) {
+    // Verifica a lógica das datas
+    if (dFinal <= dInicial || dPrimeiroPagamento <= dInicial || dPrimeiroPagamento >= dFinal) {
       return false;
     }
 
@@ -54,6 +93,7 @@ export class CalculadoraComponent {
 
   onInputChange(): void {
     this.formValido = this.validarFormulario();
+    this.cdr.detectChanges(); // Força a atualização da view
   }
 
   calcular(): void {
@@ -72,12 +112,11 @@ export class CalculadoraComponent {
     this.loanCalculatorService.calculateLoan(calculationData)
       .subscribe({
         next: (response) => {
-          this.resultados = [...response]; // Cria uma nova referência do array
-          this.cdr.detectChanges(); // Força a detecção de mudanças
+          this.resultados = [...response];
+          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Erro ao calcular empréstimo:', error);
-          // Aqui você pode adicionar uma lógica para mostrar mensagem de erro para o usuário
         }
       });
   }
