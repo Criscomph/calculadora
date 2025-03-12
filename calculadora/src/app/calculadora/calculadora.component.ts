@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { Component, ChangeDetectorRef, NgZone, ApplicationRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
@@ -13,7 +13,7 @@ import { InstallmentDTO } from '../models/loan-calculation.model';
   imports: [FormsModule, CommonModule, HttpClientModule],
   providers: [LoanCalculatorService]
 })
-export class CalculadoraComponent implements AfterViewInit {
+export class CalculadoraComponent {
   dataInicial: string = '';
   dataFinal: string = '';
   primeiroPagamento: string = '';
@@ -26,13 +26,10 @@ export class CalculadoraComponent implements AfterViewInit {
 
   constructor(
     private loanCalculatorService: LoanCalculatorService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone,
+    private appRef: ApplicationRef
   ) {}
-
-  ngAfterViewInit() {
-    // Força a detecção de mudanças após a view ser inicializada
-    this.cdr.detectChanges();
-  }
 
   formatarValorEmprestimo(valor: string) {
     // Remove todos os caracteres não numéricos
@@ -130,19 +127,25 @@ export class CalculadoraComponent implements AfterViewInit {
       taxaJuros: this.taxaJuros
     };
 
-    this.loanCalculatorService.calculateLoan(calculationData)
-      .subscribe({
-        next: (response) => {
-          // Cria uma nova referência do array para garantir a detecção de mudanças
-          this.resultados = [...response];
-          // Força a detecção de mudanças imediatamente
-          setTimeout(() => {
-            this.cdr.detectChanges();
-          });
-        },
-        error: (error) => {
-          console.error('Erro ao calcular empréstimo:', error);
-        }
-      });
+    this.ngZone.run(() => {
+      this.loanCalculatorService.calculateLoan(calculationData)
+        .subscribe({
+          next: (response) => {
+            this.resultados = [...response];
+            
+            // Força uma atualização completa da aplicação
+            this.ngZone.runOutsideAngular(() => {
+              Promise.resolve().then(() => {
+                this.ngZone.run(() => {
+                  this.appRef.tick();
+                });
+              });
+            });
+          },
+          error: (error) => {
+            console.error('Erro ao calcular empréstimo:', error);
+          }
+        });
+    });
   }
 } 
