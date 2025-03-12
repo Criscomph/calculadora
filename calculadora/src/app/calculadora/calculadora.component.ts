@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
@@ -11,7 +11,8 @@ import { InstallmentDTO } from '../models/loan-calculation.model';
   styleUrls: ['./calculadora.component.scss'],
   standalone: true,
   imports: [FormsModule, CommonModule, HttpClientModule],
-  providers: [LoanCalculatorService]
+  providers: [LoanCalculatorService],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CalculadoraComponent {
   dataInicial: string = '';
@@ -30,21 +31,37 @@ export class CalculadoraComponent {
   ) {}
 
   formatarValorEmprestimo(valor: string) {
-    // Remove todos os caracteres não numéricos exceto vírgula
-    let numero = valor.replace(/[^\d,]/g, '').replace(',', '.');
+    // Remove todos os caracteres não numéricos
+    let partes = valor.split(',');
+    let numerosSemVirgula = partes[0].replace(/\D/g, '');
     
-    // Converte para número
-    let valorNumerico = Number(numero);
+    // Se não há números antes da vírgula, usa 0
+    if (!numerosSemVirgula) {
+      numerosSemVirgula = '0';
+    }
     
-    // Atualiza o valor numérico
-    this.valorEmprestimo = valorNumerico;
+    // Adiciona pontos para milhares na parte antes da vírgula
+    let numeroFormatado = '';
+    for (let i = 0; i < numerosSemVirgula.length; i++) {
+      if (i > 0 && (numerosSemVirgula.length - i) % 3 === 0) {
+        numeroFormatado += '.';
+      }
+      numeroFormatado += numerosSemVirgula[i];
+    }
+
+    // Trata a parte decimal
+    if (valor.includes(',')) {
+      numeroFormatado += ',';
+      if (partes[1]) {
+        numeroFormatado += partes[1].replace(/\D/g, '');
+      }
+    }
+
+    // Atualiza o valor numérico (para cálculos)
+    this.valorEmprestimo = Number(numeroFormatado.replace(/\./g, '').replace(',', '.'));
     
-    // Formata o valor para exibição
-    this.valorEmprestimoFormatado = valorNumerico.toLocaleString('pt-BR', {
-      style: 'decimal',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
+    // Atualiza o valor formatado (para exibição)
+    this.valorEmprestimoFormatado = numeroFormatado;
 
     this.onInputChange();
   }
@@ -93,7 +110,7 @@ export class CalculadoraComponent {
 
   onInputChange(): void {
     this.formValido = this.validarFormulario();
-    this.cdr.detectChanges(); // Força a atualização da view
+    this.cdr.detectChanges();
   }
 
   calcular(): void {
@@ -112,8 +129,8 @@ export class CalculadoraComponent {
     this.loanCalculatorService.calculateLoan(calculationData)
       .subscribe({
         next: (response) => {
-          this.resultados = [...response];
-          this.cdr.detectChanges();
+          this.resultados = response;
+          this.cdr.markForCheck();
         },
         error: (error) => {
           console.error('Erro ao calcular empréstimo:', error);

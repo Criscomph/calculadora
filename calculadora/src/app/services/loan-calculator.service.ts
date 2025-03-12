@@ -15,13 +15,10 @@ export class LoanCalculatorService {
   calculateLoan(data: LoanCalculation): Observable<InstallmentDTO[]> {
     return this.http.post<InstallmentDTO[]>(`${this.apiUrl}/calcular`, data)
       .pipe(
-        map(response => {
-          // Garante que as datas são convertidas corretamente
-          return response.map(item => ({
-            ...item,
-            dataCompetencia: new Date(item.dataCompetencia)
-          }));
-        })
+        map(response => response.map(item => ({
+          ...item,
+          dataCompetencia: new Date(item.dataCompetencia)
+        })))
       );
   }
 } 
