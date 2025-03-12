@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
@@ -11,10 +11,9 @@ import { InstallmentDTO } from '../models/loan-calculation.model';
   styleUrls: ['./calculadora.component.scss'],
   standalone: true,
   imports: [FormsModule, CommonModule, HttpClientModule],
-  providers: [LoanCalculatorService],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  providers: [LoanCalculatorService]
 })
-export class CalculadoraComponent {
+export class CalculadoraComponent implements AfterViewInit {
   dataInicial: string = '';
   dataFinal: string = '';
   primeiroPagamento: string = '';
@@ -29,6 +28,11 @@ export class CalculadoraComponent {
     private loanCalculatorService: LoanCalculatorService,
     private cdr: ChangeDetectorRef
   ) {}
+
+  ngAfterViewInit() {
+    // Força a detecção de mudanças após a view ser inicializada
+    this.cdr.detectChanges();
+  }
 
   formatarValorEmprestimo(valor: string) {
     // Remove todos os caracteres não numéricos
@@ -129,8 +133,12 @@ export class CalculadoraComponent {
     this.loanCalculatorService.calculateLoan(calculationData)
       .subscribe({
         next: (response) => {
-          this.resultados = response;
-          this.cdr.markForCheck();
+          // Cria uma nova referência do array para garantir a detecção de mudanças
+          this.resultados = [...response];
+          // Força a detecção de mudanças imediatamente
+          setTimeout(() => {
+            this.cdr.detectChanges();
+          });
         },
         error: (error) => {
           console.error('Erro ao calcular empréstimo:', error);
