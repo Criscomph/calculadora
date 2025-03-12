@@ -10,7 +10,7 @@ export interface InstallmentDTO {
   dataCompetencia: Date;
   valorEmprestimo: number;
   saldoDevedor: number;
-  consolidada: number;
+  consolidada: string;
   total: number;
   amortizacao: number;
   saldo: number;
