@@ -42,46 +42,79 @@
     border-radius: 4px;
     cursor: pointer;
     height: 38px;
+
+    &:hover {
+      background-color: #0052a3;
+    }
+
+    &:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
   }
 }
 
 .results-grid {
   width: 100%;
   overflow-x: auto;
+  margin-top: 20px;
 
   table {
     width: 100%;
     border-collapse: collapse;
+    font-size: 14px;
     
-    .header-groups th {
+    th {
+      border: 1px solid #2a5d8c;
+      padding: 8px;
       background-color: #1e4e79;
       color: white;
-      padding: 12px;
-      text-align: center;
       font-weight: normal;
-      border: 1px solid #2a5d8c;
       white-space: nowrap;
     }
 
-    th {
+    .data-header {
+      text-align: center;
       background-color: #1e4e79;
-      color: white;
-      padding: 12px;
-      text-align: left;
+    }
+
+    .group-header {
+      text-align: center;
+      background-color: #1e4e79;
+    }
+
+    .sub-header {
+      text-align: center;
+      background-color: #1e4e79;
       font-weight: normal;
-      border: 1px solid #2a5d8c;
-      white-space: nowrap;
     }
 
     td {
-      padding: 8px 12px;
       border: 1px solid #ddd;
-      background-color: white;
+      padding: 8px;
+      text-align: right;
       white-space: nowrap;
+      background-color: white;
     }
 
-    td:not(:first-child) {
-      text-align: right;
+    .date-cell {
+      text-align: center;
+    }
+
+    tbody {
+      tr {
+        &:nth-child(even) {
+          td {
+            background-color: #f8f9fa;
+          }
+        }
+
+        &:hover {
+          td {
+            background-color: #f0f0f0;
+          }
+        }
+      }
     }
   }
 }
@@ -90,7 +123,25 @@
   border-color: #dc3545;
 }
 
-.calculate-btn:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+// Responsive adjustments
+@media screen and (max-width: 1200px) {
+  .input-container {
+    grid-template-columns: repeat(3, 1fr);
+    
+    .calculate-btn {
+      grid-column: 1 / -1;
+      width: 200px;
+      justify-self: center;
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .input-container {
+    grid-template-columns: 1fr;
+    
+    .calculate-btn {
+      width: 100%;
+    }
+  }
 } 

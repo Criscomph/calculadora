@@ -33,28 +33,29 @@
   <div class="results-grid">
     <table>
       <thead>
-        <tr class="header-groups">
-          <th colspan="3">Empréstimo</th>
-          <th colspan="3">Parcela</th>
-          <th colspan="2">Principal</th>
-          <th colspan="3">Juros</th>
+        <tr>
+          <th class="data-header">Data Competência</th>
+          <th colspan="2" class="group-header">Empréstimo</th>
+          <th colspan="3" class="group-header">Parcela</th>
+          <th colspan="2" class="group-header">Principal</th>
+          <th colspan="2" class="group-header">Juros</th>
         </tr>
         <tr>
-          <th>Data Competência</th>
-          <th>Valor do Empréstimo</th>
-          <th>Saldo Devedor</th>
-          <th>Consolidada</th>
-          <th>Total</th>
-          <th>Amortização</th>
-          <th>Saldo</th>
-          <th>Provisão</th>
-          <th>Acumulado</th>
-          <th>Pago</th>
+          <th class="sub-header"></th>
+          <th class="sub-header">Valor do Empréstimo</th>
+          <th class="sub-header">Saldo Devedor</th>
+          <th class="sub-header">Consolidada</th>
+          <th class="sub-header">Total</th>
+          <th class="sub-header">Amortização</th>
+          <th class="sub-header">Saldo</th>
+          <th class="sub-header">Provisão</th>
+          <th class="sub-header">Acumulado</th>
+          <th class="sub-header">Pago</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let resultado of resultados">
-          <td>{{resultado.dataCompetencia | date:'dd/MM/yyyy'}}</td>
+          <td class="date-cell">{{resultado.dataCompetencia | date:'dd/MM/yyyy'}}</td>
           <td>{{resultado.valorEmprestimo | number:'1.2-2'}}</td>
           <td>{{resultado.saldoDevedor | number:'1.2-2'}}</td>
           <td>{{resultado.consolidada | number:'1.2-2'}}</td>
@@ -63,7 +64,7 @@
           <td>{{resultado.saldo | number:'1.2-2'}}</td>
           <td>{{resultado.provisao | number:'1.2-2'}}</td>
           <td>{{resultado.acumulado | number:'1.2-2'}}</td>
-          <td>{{resultado.pago}}</td>
+          <td>{{resultado.pago | number:'1.2-2'}}</td>
         </tr>
       </tbody>
     </table>

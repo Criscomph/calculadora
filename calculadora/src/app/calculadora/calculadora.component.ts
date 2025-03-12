@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
@@ -22,7 +22,10 @@ export class CalculadoraComponent {
   resultados: InstallmentDTO[] = [];
   formValido: boolean = false;
 
-  constructor(private loanCalculatorService: LoanCalculatorService) {}
+  constructor(
+    private loanCalculatorService: LoanCalculatorService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   validarFormulario(): boolean {
     if (!this.dataInicial || !this.dataFinal || !this.primeiroPagamento || 
@@ -69,7 +72,8 @@ export class CalculadoraComponent {
     this.loanCalculatorService.calculateLoan(calculationData)
       .subscribe({
         next: (response) => {
-          this.resultados = response;
+          this.resultados = [...response]; // Cria uma nova referência do array
+          this.cdr.detectChanges(); // Força a detecção de mudanças
         },
         error: (error) => {
           console.error('Erro ao calcular empréstimo:', error);

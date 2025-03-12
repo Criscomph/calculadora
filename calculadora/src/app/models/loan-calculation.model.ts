@@ -7,7 +7,7 @@ export interface LoanCalculation {
 }
 
 export interface InstallmentDTO {
-  dataCompetencia: string;
+  dataCompetencia: Date;
   valorEmprestimo: number;
   saldoDevedor: number;
   consolidada: number;

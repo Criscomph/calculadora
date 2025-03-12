@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { LoanCalculation, InstallmentDTO } from '../models/loan-calculation.model';
 
 @Injectable({
@@ -9,14 +10,18 @@ import { LoanCalculation, InstallmentDTO } from '../models/loan-calculation.mode
 export class LoanCalculatorService {
   private apiUrl = 'http://localhost:8080/api/emprestimo';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  calculateLoan(loanCalculation: LoanCalculation): Observable<InstallmentDTO[]> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    });
-
-    return this.http.post<InstallmentDTO[]>(`${this.apiUrl}/calcular`, loanCalculation, { headers });
+  calculateLoan(data: LoanCalculation): Observable<InstallmentDTO[]> {
+    return this.http.post<InstallmentDTO[]>(`${this.apiUrl}/calcular`, data)
+      .pipe(
+        map(response => {
+          // Garante que as datas são convertidas corretamente
+          return response.map(item => ({
+            ...item,
+            dataCompetencia: new Date(item.dataCompetencia)
+          }));
+        })
+      );
   }
 } 
